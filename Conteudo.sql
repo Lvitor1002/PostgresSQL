@@ -236,93 +236,43 @@ where t."Nome" ilike '%Entrega Fácil%'
 
 
 
-
--- 12. Os pedidos feitos pela vendedora Maria ou pela vendedora Aline.
-
-
-
-
-
--- 13. Os clientes que moram em União da Vitória ou Porto União.
+-- 12. Os pedidos feitos pela vendedora Maria ou pela vendedora Ana.
+select v."Nome" as "Nome Vendedora", p."Valor" as "Valor Pedido"
+from "Pedido" p 
+inner join "Vendedor" v on p."IdVendedor" = v."IdVendedor"
+where v."Nome" like '%Maria%' or v."Nome" like '%Ana%'
 
 
 
+-- 13. As transportadoras que são de União da Vitória ou Porto União.
+select t."Nome" as "Nome Transportadora", m."Nome" as "Nome Município" 
+from "Transportadora" t
+inner join "Municipio" m on t."IdMunicipio" = m."IdMunicipio"
+where m."Nome" not like '%União da Vitória%' or m."Nome" not like '%Porto União%'
 
 
--- 14. Os clientes que não moram em União da Vitória e nem em Porto União.
-
-
-
-
-
--- 15. Os clientes que não informaram o logradouro.
-
-
-
-
-
--- 16. Os clientes que moram em avenidas.
-
-
-
-
-
--- 17. Os vendedores que o nome começa com a letra S.
-
-
+-- 17. Os vendedores que o nome começa com a letra P.
+select "Nome" as "Nome Vendedores" from "Vendedor"
+where "Nome" like 'P%'
 
 
 
 -- 18. Os vendedores que o nome termina com a letra A.
-
-
+select "Nome" as "Nome Vendedores" from "Vendedor"
+where "Nome" like '%a'
 
 
 
 -- 19. Os vendedores que o nome não começa com a letra A.
-
-
-
-
-
--- 20. Os municípios que começam com a letra P e são de Santa Catarina.
-
-
-
-
-
--- 21. As transportadoras que informaram o endereço.
-
-
-
-
-
--- 22. Os itens do pedido 01.
-
-
-
-
-
--- 23. Os itens do pedido 06 ou do pedido 10.
-
-
-
-
-
--- -=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=-
-
-
+select "Nome" as "Nome Vendedores" from "Vendedor"
+where "Nome" not like 'A%'
 
 
 
 -- -- Funções agregadas
 
-
-
-
-
 -- 1. A média dos valores de vendas dos vendedores que venderam mais que R$ 200,00.
-
+ https://www.udemy.com/course/banco-de-dados-sql-postgresql/learn/lecture/36137750#overview
 
 
 
@@ -858,9 +808,6 @@ where t."Nome" ilike '%Entrega Fácil%'
 
 -=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=-
 
- https://www.udemy.com/course/banco-de-dados-sql-postgresql/learn/lecture/36137750#overview
-
--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=-
 
 
 -=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=-
@@ -1066,3 +1013,5 @@ where t."Nome" ilike '%Entrega Fácil%'
 
 
 -=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=-
+
+
