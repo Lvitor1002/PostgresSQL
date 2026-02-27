@@ -3,11 +3,10 @@
 -- Pergunta: Liste o nome de todos os produtos e o nome do seu subgrupo (apenas produtos ativos).
 
 -- Solução:
-
-SELECT p."Nome" AS produto, psg."Nome" AS subgrupo
-FROM public."Produtos" p
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE p."Ativo" = true;
+select p."Nome" as "Nome Produto", psg."Nome" as "Nome Sub Grupos de Produtos" 
+from "Produtos" p 
+inner join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+where p."Ativo" = true
 
 
 
@@ -17,13 +16,12 @@ WHERE p."Ativo" = true;
 -- Pergunta: Conte quantos produtos existem em cada subgrupo (apenas subgrupos ativos) e mostre o nome do subgrupo e a contagem.
 
 -- Solução:
-
-SELECT psg."Nome" AS subgrupo, COUNT(p."Codigo") AS total_produtos
-FROM public."ProdutosSubGrupo" psg
-LEFT JOIN public."Produtos" p ON p."IdSubGrupo" = psg."Codigo" AND p."Ativo" = true
-WHERE psg."Ativo" = true
-GROUP BY psg."Nome", psg."Codigo"
-ORDER BY total_produtos DESC;
+select  psg."Nome" as "Sub Grupos de Produtos", count(p."Codigo") as Quantidade_Produtos 
+from "Produtos" p 
+right join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+where psg."Ativo" = true
+group by psg."Nome"
+order by Quantidade_Produtos desc
 
 
 
@@ -33,13 +31,13 @@ ORDER BY total_produtos DESC;
 -- Pergunta: Calcule o preço médio de venda dos produtos por subgrupo, mostrando apenas subgrupos com média acima de 10.
 
 -- Solução:
-
-SELECT psg."Nome", AVG(p."PrecoVenda") AS media_preco
-FROM public."Produtos" p
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE p."Ativo" = true AND p."PrecoVenda" IS NOT NULL
-GROUP BY psg."Nome"
-HAVING AVG(p."PrecoVenda") > 10;
+select  psg."Nome" as "Sub Grupos de Produtos", round(avg(p."PrecoVenda"),2) as "Média de Preço de Venda" 
+from "Produtos" p 
+inner join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+where psg."Ativo"
+group by psg."Nome"
+having avg(p."PrecoVenda") > 10
+order by "Média de Preço de Venda" asc
 
 
 
@@ -48,17 +46,16 @@ HAVING AVG(p."PrecoVenda") > 10;
 -- Pergunta: Encontre o produto mais caro (maior preço de venda) de cada subgrupo. Liste o nome do subgrupo, nome do produto e preço.
 
 -- Solução:
-
-SELECT psg."Nome" AS subgrupo, p."Nome" AS produto, p."PrecoVenda"
-FROM public."Produtos" p
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE (p."IdSubGrupo", p."PrecoVenda") IN (
-    SELECT "IdSubGrupo", MAX("PrecoVenda")
-    FROM public."Produtos"
-    WHERE "Ativo" = true AND "PrecoVenda" IS NOT NULL
-    GROUP BY "IdSubGrupo"
-)
-ORDER BY psg."Nome";
+select psg."Nome" as "Sub grupo de Produtos", 
+	   p."Nome" as "Nome do Produto",
+	   p."PrecoVenda" as "Maior Preço de Venda de um Produto"
+from "Produtos" p 
+inner join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+where (p."IdSubGrupo", p."PrecoVenda") in (select "IdSubGrupo", max("PrecoVenda") --Pegar o produto mais caro de cada subgrupo
+										  from "Produtos"
+										  where "Ativo" 
+										  group by "IdSubGrupo")
+order by psg."Nome"
 
 
 
@@ -69,15 +66,15 @@ ORDER BY psg."Nome";
 -- Pergunta: Liste todos os depósitos que pertencem à empresa de nome 'CONVENIENCIA CRUZEIRO DO SUL' (ID 1) e que estão ativos.
 
 -- Solução:
-
-SELECT d."Nome" AS deposito
-FROM public."Depositos" d
-JOIN public."Empresas" e ON d."IdEmpresa" = e."ID"
-WHERE e."Nome" = 'AUTO POSTO PEIXINHO CRUZEIRO DO SUL LTDA' AND d."Ativo" = true;
-
-
+select d."Nome" as Deposito, e."Nome" as Empresa
+from "Depositos" d
+left join "Empresas" e on d."IdEmpresa" = e."ID"
+where e."Nome" like '%CONVENIENCIA CRUZEIRO DO SUL%' 
+and d."Ativo"
 
 
+
+AQUI
 -- Exercício 6
 -- Pergunta: Mostre a quantidade de produtos em cada depósito (considere que cada registro em Estoques representa um produto presente no depósito). Inclua o nome do depósito.
 
