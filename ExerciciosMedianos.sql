@@ -74,17 +74,14 @@ and d."Ativo"
 
 
 
-AQUI
+
 -- Exercício 6
 -- Pergunta: Mostre a quantidade de produtos em cada depósito (considere que cada registro em Estoques representa um produto presente no depósito). Inclua o nome do depósito.
 
--- Solução:
-
-SELECT d."Nome" AS deposito, COUNT(e."IdProduto") AS quantidade_produtos
-FROM public."Estoques" e
-JOIN public."Depositos" d ON e."IdDeposito" = d."Codigo"
-WHERE e."Ativo" = true
-GROUP BY d."Nome";
+select d."Nome" as "Deposito", count(e."Codigo") as "Quantidade de Produtos"
+from "Estoques" e
+inner join "Depositos" d on e."IdDeposito" = d."Codigo"
+group by "Deposito"
 
 
 
@@ -92,13 +89,11 @@ GROUP BY d."Nome";
 
 -- Exercício 7
 -- Pergunta: Quais produtos estão em estoque no depósito de nome 'Depósito' (código 101) e também têm preço de venda maior que 10? Liste o nome do produto e o preço.
-
--- Solução:
-
-SELECT p."Nome", p."PrecoVenda"
-FROM public."Estoques" e
-JOIN public."Produtos" p ON e."IdProduto" = p."Codigo"
-WHERE e."IdDeposito" = 101 AND p."PrecoVenda" > 10 AND e."Ativo" = true;
+select p."Nome" as "Nome Produto", p."PrecoVenda" as "Preço do Produto" 
+from "Estoques" e 
+inner join "Produtos" p on e."IdProduto" = p."Codigo"
+where e."IdDeposito" = 101
+and p."PrecoVenda" > 10 and e."Ativo" = true
 
 
 
@@ -106,14 +101,12 @@ WHERE e."IdDeposito" = 101 AND p."PrecoVenda" > 10 AND e."Ativo" = true;
 -- Exercício 8
 -- Pergunta: Calcule o valor total do estoque (preço de custo * quantidade) – mas como não há campo de quantidade, vamos simular considerando que cada registro em Estoques representa uma unidade. Assim, some o preço de custo de todos os produtos em estoque por depósito.
 
--- Solução:
-
-SELECT d."Nome" AS deposito, SUM(p."PrecoCusto") AS valor_total_estoque
-FROM public."Estoques" e
-JOIN public."Produtos" p ON e."IdProduto" = p."Codigo"
-JOIN public."Depositos" d ON e."IdDeposito" = d."Codigo"
-WHERE e."Ativo" = true
-GROUP BY d."Nome";
+select d."Nome" as "Deposito", round(sum(p."PrecoCusto"),2) as "Total do Estoque"
+from "Estoques" e 
+inner join "Produtos" p on e."IdProduto" = p."Codigo" 
+inner join "Depositos" d on e."IdDeposito" = d."Codigo"
+where e."Ativo"
+group by "Deposito"
 
 
 
@@ -123,14 +116,13 @@ GROUP BY d."Nome";
 -- Exercício 9
 -- Pergunta: Liste os nomes das empresas que possuem pelo menos um depósito ativo.
 
--- Solução:
-
-SELECT e."Nome"
-FROM public."Empresas" e
-WHERE EXISTS (
-    SELECT 1 FROM public."Depositos" d
-    WHERE d."IdEmpresa" = e."ID" AND d."Ativo" = true
-);
+select e."Nome" as "Empresas"
+from "Empresas" e
+where exists (
+	select 1 from "Depositos" d
+	where e."ID" = d."IdEmpresa"
+	and d."Ativo"
+)
 
 
 
@@ -139,17 +131,15 @@ WHERE EXISTS (
 -- Exercício 10
 -- Pergunta: Para cada empresa, mostre a quantidade de depósitos que ela possui (apenas empresas ativas).
 
--- Solução:
-
-SELECT e."Nome", COUNT(d."Codigo") AS total_depositos
-FROM public."Empresas" e
-LEFT JOIN public."Depositos" d ON e."ID" = d."IdEmpresa" AND d."Ativo" = true
-WHERE e."Ativo" = true
-GROUP BY e."ID", e."Nome";
+select e."Nome" as "Empresas", count(d."Codigo") as "Quantidade Depositos"
+from "Depositos" d 
+right join "Empresas" e on d."IdEmpresa" = e."ID"
+where e."Ativo"
+group by "Empresas"
 
 
 
-
+Aqui
 -- Exercício 11
 -- Pergunta: Encontre o subgrupo com a maior média de preço de custo. Mostre o nome do subgrupo e a média.
 
