@@ -139,32 +139,40 @@ group by "Empresas"
 
 
 
-Aqui
--- Exercício 11
+
+-- Exercício 11 --------------------------------------------------------------------------------------------------
 -- Pergunta: Encontre o subgrupo com a maior média de preço de custo. Mostre o nome do subgrupo e a média.
+select psg."Nome", round(avg(p."PrecoCusto"),2) as "Média dos preços de custo" 
+from "Produtos" p 
+inner join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+group by psg."Nome"
+having avg(p."PrecoCusto") = (select max(media_subgrupo) from (
+							  select avg(p2."PrecoCusto") as media_subgrupo
+							  from "Produtos" p2
+							  group by p2."IdSubGrupo"
+							  ) as sub
+);
 
--- Solução:
+-- ou use uma forma mais simples: 
 
-SELECT psg."Nome", AVG(p."PrecoCusto") AS media_custo
-FROM public."Produtos" p
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE p."Ativo" = true
-GROUP BY psg."Nome"
-ORDER BY media_custo DESC
-LIMIT 1;
-
+select psg."Nome", round(avg(p."PrecoCusto"),2) as "Média dos preços de custo" 
+from "Produtos" p 
+inner join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+group by psg."Nome"
+order by "Média dos preços de custo" desc
+limit 1
+--------------------------------------------------------------------------------------------------
 
 
 
 -- Exercício 12
 -- Pergunta: Liste os produtos que têm preço de venda acima da média geral de preço de venda de todos os produtos ativos.
 
--- Solução:
-
-SELECT "Nome", "PrecoVenda"
-FROM public."Produtos"
-WHERE "Ativo" = true AND "PrecoVenda" > (SELECT AVG("PrecoVenda") FROM public."Produtos" WHERE "Ativo" = true);
-
+select "Nome", "PrecoVenda"
+from "Produtos"
+where "PrecoVenda" > (select avg("PrecoVenda") as MediaPreco from "Produtos"
+				      where "Ativo")
+order by "PrecoVenda" desc
 
 
 
@@ -172,12 +180,14 @@ WHERE "Ativo" = true AND "PrecoVenda" > (SELECT AVG("PrecoVenda") FROM public."P
 -- Exercício 13
 -- Pergunta: Mostre o nome do produto, seu subgrupo e a diferença entre o preço de venda e o preço de custo (lucro unitário) apenas para produtos com lucro positivo.
 
--- Solução:
-
-SELECT p."Nome", psg."Nome" AS subgrupo, (p."PrecoVenda" - p."PrecoCusto") AS lucro
-FROM public."Produtos" p
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE p."Ativo" = true AND (p."PrecoVenda" - p."PrecoCusto") > 0;
+select p."Nome" as "Nome Produtos", 
+		psg."Nome" as "Produtos Sub Grupo", 
+		(p."PrecoVenda" - p."PrecoCusto") as "Lucro Unitário"
+from "Produtos" p 
+inner join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+where p."Ativo" 
+and (p."PrecoVenda" - p."PrecoCusto") > 0
+order by "Lucro Unitário" asc
 
 
 
@@ -185,21 +195,17 @@ WHERE p."Ativo" = true AND (p."PrecoVenda" - p."PrecoCusto") > 0;
 -- Exercício 14
 -- Pergunta: Qual a margem de lucro média (em percentual) por subgrupo? Considere margem = (preço_venda - preço_custo)/preço_custo * 100. Exiba subgrupo e margem média.
 
--- Solução:
-
-SELECT psg."Nome", AVG((p."PrecoVenda" - p."PrecoCusto") / p."PrecoCusto" * 100) AS margem_media_percent
-FROM public."Produtos" p
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE p."Ativo" = true AND p."PrecoCusto" > 0
-GROUP BY psg."Nome";
+select psg."Nome" as "Sub Grupo", 
+		round(avg((p."PrecoVenda" - p."PrecoCusto") / p."PrecoCusto" * 100),2) as "Margem Média"
+from "Produtos" p 
+inner join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+group by "Sub Grupo"
 
 
 
 
 
-
-
-
+AQUI
 -- Exercício 15
 -- Pergunta: Liste os produtos que não estão em nenhum estoque (ou seja, não aparecem na tabela Estoques).
 
