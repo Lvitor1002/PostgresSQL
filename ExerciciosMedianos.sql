@@ -205,16 +205,13 @@ group by "Sub Grupo"
 
 
 
-AQUI
 -- Exercício 15
 -- Pergunta: Liste os produtos que não estão em nenhum estoque (ou seja, não aparecem na tabela Estoques).
 
--- Solução:
-
-SELECT p."Nome"
-FROM public."Produtos" p
-LEFT JOIN public."Estoques" e ON p."Codigo" = e."IdProduto" AND e."Ativo" = true
-WHERE e."IdProduto" IS NULL AND p."Ativo" = true;
+select p."Nome" as "Produtos", e."Codigo" as "Estoque"
+from "Estoques" e
+right join "Produtos" p on e."IdProduto" = p."Codigo"
+where e."IdProduto" is null
 
 
 
@@ -224,15 +221,11 @@ WHERE e."IdProduto" IS NULL AND p."Ativo" = true;
 -- Exercício 16
 -- Pergunta: Para cada produto, mostre quantos depósitos diferentes ele está presente (apenas estoques ativos).
 
--- Solução:
-
-SELECT p."Nome", COUNT(DISTINCT e."IdDeposito") AS quantidade_depositos
-FROM public."Produtos" p
-LEFT JOIN public."Estoques" e ON p."Codigo" = e."IdProduto" AND e."Ativo" = true
-WHERE p."Ativo" = true
-GROUP BY p."Nome";
-
-
+select p."Nome" as "Produto", count(distinct(e."IdDeposito")) as "Deposito"
+from "Estoques" e  
+right join "Produtos" p on e."IdProduto" = p."Codigo" 
+where e."Ativo"
+group by "Produto"
 
 
 
@@ -240,16 +233,12 @@ GROUP BY p."Nome";
 -- Exercício 17
 -- Pergunta: Encontre o depósito que tem o maior número de produtos diferentes em estoque.
 
--- Solução:
-
-SELECT d."Nome", COUNT(e."IdProduto") AS total_produtos
-FROM public."Estoques" e
-JOIN public."Depositos" d ON e."IdDeposito" = d."Codigo"
-WHERE e."Ativo" = true
-GROUP BY d."Nome"
-ORDER BY total_produtos DESC
-LIMIT 1;
-
+select d."Nome" as "Deposito", count(distinct(e."IdProduto")) as "Maior número de produtos diferentes em estoque"
+from "Estoques" e
+inner join "Depositos" d on e."IdDeposito" = d."Codigo"
+group by "Nome"
+order by "Maior número de produtos diferentes em estoque" desc 
+limit 1 
 
 
 
@@ -257,12 +246,11 @@ LIMIT 1;
 -- Exercício 18
 -- Pergunta: Liste os nomes dos produtos que estão no depósito 101 e cujo subgrupo é 'BEBIDAS' (código 101).
 
--- Solução:
-
-SELECT p."Nome"
-FROM public."Estoques" e
-JOIN public."Produtos" p ON e."IdProduto" = p."Codigo"
-WHERE e."IdDeposito" = 101 AND p."IdSubGrupo" = 101 AND e."Ativo" = true;
+select p."Nome" as "Produto", p."IdSubGrupo" as "Grupo dos Produtos"
+from "Estoques" e
+inner join "Produtos" p on e."IdProduto" = p."Codigo"
+where e."IdDeposito" = 101
+and p."IdSubGrupo" = 101 
 
 
 
@@ -272,14 +260,10 @@ WHERE e."IdDeposito" = 101 AND p."IdSubGrupo" = 101 AND e."Ativo" = true;
 -- Exercício 19
 -- Pergunta: Calcule o preço médio de venda dos produtos agrupados por IdGrupo (campo em Produtos). Considere apenas produtos ativos. (Observação: IdGrupo parece ser uma classificação mais ampla que subgrupo.)
 
--- Solução:
-
-SELECT p."IdGrupo", AVG(p."PrecoVenda") AS media_preco
-FROM public."Produtos" p
-WHERE p."Ativo" = true AND p."PrecoVenda" IS NOT NULL
-GROUP BY p."IdGrupo";
-
-
+select "IdGrupo" as "Grupo", round(avg("PrecoVenda"),2) as "Preço Médio dos Produtos"
+from "Produtos"
+where "Ativo"
+group by "Grupo"
 
 
 
@@ -287,15 +271,10 @@ GROUP BY p."IdGrupo";
 -- Exercício 20
 -- Pergunta: Mostre o nome do produto, seu grupo (usando IdGrupo) e subgrupo, ordenado por grupo.
 
--- Solução:
-
-SELECT p."Nome", p."IdGrupo", psg."Nome" AS subgrupo
-FROM public."Produtos" p
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE p."Ativo" = true
-ORDER BY p."IdGrupo";
-
-
+select p."Nome" as "produto", p."IdGrupo" as "Grupo", psg."Nome" as "Sub Grupo"
+from "Produtos" p
+left join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+order by "Grupo" asc
 
 
 
@@ -303,19 +282,19 @@ ORDER BY p."IdGrupo";
 -- Exercício 21
 -- Pergunta: Quais são os subgrupos que têm mais de 5 produtos ativos? Liste o nome do subgrupo e a quantidade.
 
--- Solução:
-
-SELECT psg."Nome", COUNT(p."Codigo") AS total
-FROM public."ProdutosSubGrupo" psg
-JOIN public."Produtos" p ON psg."Codigo" = p."IdSubGrupo" AND p."Ativo" = true
-GROUP BY psg."Nome"
-HAVING COUNT(p."Codigo") > 5;
-
-
-
-
+select psg."Nome" as "Produtos do Sub Grupo", 
+		p."Ativo" as "Produto Ativos",
+		count(p."Codigo") as "Quantidade de Produtos"
+from "Produtos" p 
+left join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+where p."Ativo"
+group by "Produtos do Sub Grupo", "Produto Ativos"
+having count(p."Codigo") > 5
+order by "Quantidade de Produtos" desc
 
 
+
+AQUI
 -- Exercício 22
 -- Pergunta: Encontre o produto com o menor preço de custo em cada subgrupo. Exiba subgrupo, nome do produto e preço de custo.
 
