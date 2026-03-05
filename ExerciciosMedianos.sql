@@ -294,21 +294,17 @@ order by "Quantidade de Produtos" desc
 
 
 
-AQUI
+
 -- Exercício 22
 -- Pergunta: Encontre o produto com o menor preço de custo em cada subgrupo. Exiba subgrupo, nome do produto e preço de custo.
 
--- Solução:
-
-SELECT psg."Nome" AS subgrupo, p."Nome", p."PrecoCusto"
-FROM public."Produtos" p
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE (p."IdSubGrupo", p."PrecoCusto") IN (
-    SELECT "IdSubGrupo", MIN("PrecoCusto")
-    FROM public."Produtos"
-    WHERE "Ativo" = true AND "PrecoCusto" > 0
-    GROUP BY "IdSubGrupo"
-);
+select psg."Nome" as "Produtos Sub Grupo", p."Nome" as "Produto", p."PrecoCusto" as "Menor Preço de Custo"
+from "Produtos" p 
+inner join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+where (p."IdSubGrupo", p."PrecoCusto") in (select "IdSubGrupo", min("PrecoCusto") 
+											from "Produtos"
+											where "PrecoCusto" > 0
+											group by "IdSubGrupo")
 
 
 
@@ -317,12 +313,11 @@ WHERE (p."IdSubGrupo", p."PrecoCusto") IN (
 -- Exercício 23
 -- Pergunta: Liste todas as contas contábeis do tipo 'D' (despesa) que estão ativas, ordenadas por nome.
 
--- Solução:
-
-SELECT "ID", "Nome", "Tipo"
-FROM public."Contas"
-WHERE "Tipo" = 'D' AND "Ativo" = true
-ORDER BY "Nome";
+select "Nome", "TipoContabil"
+from "Contas" 
+where "Ativo"
+and "TipoContabil" = 'D'
+order by "Nome"
 
 
 
@@ -331,18 +326,16 @@ ORDER BY "Nome";
 -- Exercício 24
 -- Pergunta: Mostre o nome da empresa e a quantidade de contas contábeis associadas a ela (campo IdEmpresaConta). Considere apenas contas ativas.
 
--- Solução:
-
-SELECT e."Nome", COUNT(c."ID") AS total_contas
-FROM public."Empresas" e
-LEFT JOIN public."Contas" c ON e."ID" = c."IdEmpresaConta" AND c."Ativo" = true
-WHERE e."Ativo" = true
-GROUP BY e."Nome";
+select e."Nome" as "Empresa", count(c."IdEmpresaConta") as "Quantidade de Empresas"
+from "Contas" c 
+inner join "Empresas" e on c."IdEmpresaConta" = e."ID"
+where c."Ativo"
+group by "Empresa"
 
 
 
 
-
+aqui
 -- Exercício 25
 -- Pergunta: Quais produtos têm preço de venda maior que o dobro do preço de custo? Liste nome, preço custo e preço venda.
 
