@@ -334,18 +334,13 @@ group by "Empresa"
 
 
 
-
-aqui
 -- Exercício 25
 -- Pergunta: Quais produtos têm preço de venda maior que o dobro do preço de custo? Liste nome, preço custo e preço venda.
 
--- Solução:
-
-SELECT "Nome", "PrecoCusto", "PrecoVenda"
-FROM public."Produtos"
-WHERE "PrecoVenda" > 2 * "PrecoCusto" AND "Ativo" = true;
-
-
+select "Nome" as "Produtos", "PrecoVenda" as "Preço de Venda", "PrecoCusto" as "Dobro do Preço de Custo"
+from "Produtos" p 
+where "PrecoVenda" > "PrecoCusto" * 2
+order by "PrecoVenda", "PrecoCusto" asc
 
 
 
@@ -353,15 +348,13 @@ WHERE "PrecoVenda" > 2 * "PrecoCusto" AND "Ativo" = true;
 -- Exercício 26
 -- Pergunta: Para cada subgrupo, calcule o preço de venda máximo, mínimo e a diferença entre eles. Exiba subgrupo, máximo, mínimo e diferença.
 
--- Solução:
-
-SELECT psg."Nome", MAX(p."PrecoVenda") AS max_venda, MIN(p."PrecoVenda") AS min_venda,
-       MAX(p."PrecoVenda") - MIN(p."PrecoVenda") AS diferenca
-FROM public."Produtos" p
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE p."Ativo" = true AND p."PrecoVenda" IS NOT NULL
-GROUP BY psg."Nome";
-
+select psg."Nome" as "Produtos do Sub Grupo", 
+        max(p."PrecoVenda") as "Preço de Venda Máximo", 
+        min(p."PrecoVenda") as "Preço de Venda Mínimo",
+        (max(p."PrecoVenda") - min(p."PrecoVenda")) as "Diferença dos Preços Min/Max"
+from "Produtos" p 
+inner join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+group by "Produtos do Sub Grupo"
 
 
 
@@ -370,12 +363,10 @@ GROUP BY psg."Nome";
 -- Exercício 27
 -- Pergunta: Liste os produtos que estão em estoque (tabela Estoques) mas que estão inativos na tabela Produtos.
 
--- Solução:
-
-SELECT p."Nome", p."Ativo"
-FROM public."Estoques" e
-JOIN public."Produtos" p ON e."IdProduto" = p."Codigo"
-WHERE p."Ativo" = false AND e."Ativo" = true;
+select p."Nome" as "Produto", e."Codigo" as "Estoque"
+from "Estoques" e
+left join "Produtos" p on e."IdProduto" = p."Codigo"
+where p."Ativo" = False and e."Ativo"
 
 
 
@@ -385,29 +376,24 @@ WHERE p."Ativo" = false AND e."Ativo" = true;
 -- Exercício 28
 -- Pergunta: Encontre a empresa que possui o maior número de depósitos ativos.
 
--- Solução:
-
-SELECT e."Nome", COUNT(d."Codigo") AS total_depositos
-FROM public."Empresas" e
-JOIN public."Depositos" d ON e."ID" = d."IdEmpresa" AND d."Ativo" = true
-GROUP BY e."Nome"
-ORDER BY total_depositos DESC
-LIMIT 1;
+select e."Nome" as "Empresa", count(d."Ativo") as "Total de Depositos Ativos"
+from "Depositos" d 
+left join "Empresas" e on d."IdEmpresa" = e."ID"
+where d."Ativo"
+group by "Empresa"
 
 
 
 
 
 -- Exercício 29
--- Pergunta: Liste os nomes dos produtos que não possuem subgrupo definido (campo IdSubGrupo nulo ou inexistente na tabela de subgrupos). (Na estrutura, IdSubGrupo não é obrigatório? Na criação da tabela Produtos, IdSubGrupo é integer, sem restrição NOT NULL, então pode ser nulo.)
+-- Pergunta: Liste os nomes dos produtos que não possuem subgrupo definido (campo IdSubGrupo nulo ou inexistente na tabela de subgrupos). 
 
--- Solução:
 
-SELECT p."Nome"
-FROM public."Produtos" p
-LEFT JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE psg."Codigo" IS NULL AND p."Ativo" = true;
-
+select p."Nome" as "Produtos", p."IdSubGrupo" as "Sub Grupo"
+from "Produtos" p 
+left join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+where psg."Codigo" is null
 
 
 
@@ -415,18 +401,17 @@ WHERE psg."Codigo" IS NULL AND p."Ativo" = true;
 -- Exercício 30
 -- Pergunta: Para cada empresa, mostre a quantidade de produtos ativos que ela possui (campo IdEmpresa em Produtos). Considere apenas empresas ativas.
 
--- Solução:
-
-SELECT e."Nome", COUNT(p."Codigo") AS total_produtos
-FROM public."Empresas" e
-LEFT JOIN public."Produtos" p ON e."ID" = p."IdEmpresa" AND p."Ativo" = true
-WHERE e."Ativo" = true
-GROUP BY e."Nome";
-
+select e."Nome" as "Empresa",
+		count(p."IdEmpresa") as "Total Produto"
+from "Produtos" p 
+right join "Empresas" e on p."IdEmpresa" = e."ID"
+where e."Ativo"
+group by "Empresa"
 
 
 
 
+AQUI
 -- Exercício 31
 -- Pergunta: Quais são os 5 produtos com maior margem de lucro (preço_venda - preço_custo)? Exiba nome e margem.
 
