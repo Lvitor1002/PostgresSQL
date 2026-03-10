@@ -411,19 +411,14 @@ group by "Empresa"
 
 
 
-AQUI
 -- Exercício 31
 -- Pergunta: Quais são os 5 produtos com maior margem de lucro (preço_venda - preço_custo)? Exiba nome e margem.
 
--- Solução:
-
-SELECT "Nome", ("PrecoVenda" - "PrecoCusto") AS margem
-FROM public."Produtos"
-WHERE "Ativo" = true AND "PrecoVenda" IS NOT NULL AND "PrecoCusto" IS NOT NULL
-ORDER BY margem DESC
-LIMIT 5;
-
-
+select "Nome" as "Produto", 
+		round("PrecoVenda" - "PrecoCusto",2) as "Margem de Lucro"
+from "Produtos"
+order by "Margem de Lucro" desc 
+limit 5
 
 
 
@@ -431,13 +426,13 @@ LIMIT 5;
 -- Exercício 32
 -- Pergunta: Liste os subgrupos que têm produtos com preço de custo igual a zero (ou muito baixo, como 0.01). Exiba subgrupo e a quantidade desses produtos.
 
--- Solução:
-
-SELECT psg."Nome", COUNT(p."Codigo") AS qtde_custo_zero
-FROM public."Produtos" p
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE p."PrecoCusto" <= 0.01 AND p."Ativo" = true
-GROUP BY psg."Nome";
+select psg."Nome" as "Sub Grupo dos Produtos",
+		count(p."PrecoCusto") as "Quantidade de Produtos",
+		p."PrecoCusto" as "Preco de Custo"
+from "Produtos" p
+right join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+where p."PrecoCusto" <= 0.01
+group by "Sub Grupo dos Produtos", "Preco de Custo"
 
 
 
@@ -445,19 +440,19 @@ GROUP BY psg."Nome";
 
 
 -- Exercício 33
--- Pergunta: Mostre o nome do produto, o nome do seu subgrupo e o nome do grupo (através de IdGrupo em Produtos, mas como não temos tabela de grupos, vamos considerar que IdGrupo é um identificador numérico e exibi-lo).
+-- Pergunta: Mostre o nome do produto, o nome do seu subgrupo e o nome do grupo (através de IdGrupo em Produtos.
 
--- Solução:
-
-SELECT p."Nome", psg."Nome" AS subgrupo, p."IdGrupo"
-FROM public."Produtos" p
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE p."Ativo" = true;
-
-
+select p."Nome" as "Produto",
+		psg."Nome" as "Sub Grupo dos Produtos",
+		pg."Nome" as "Grupo Produtos"
+from "Produtos" p 
+inner join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+inner join "ProdutosGrupo" pg on p."IdGrupo" = pg."Codigo"
 
 
 
+
+AQUI
 -- Exercício 34
 -- Pergunta: Calcule a soma dos preços de custo de todos os produtos que estão no depósito 101, agrupados por subgrupo.
 
