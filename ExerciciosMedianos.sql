@@ -452,19 +452,18 @@ inner join "ProdutosGrupo" pg on p."IdGrupo" = pg."Codigo"
 
 
 
-AQUI
 -- Exercício 34
 -- Pergunta: Calcule a soma dos preços de custo de todos os produtos que estão no depósito 101, agrupados por subgrupo.
 
--- Solução:
-
-SELECT psg."Nome", SUM(p."PrecoCusto") AS soma_custo
-FROM public."Estoques" e
-JOIN public."Produtos" p ON e."IdProduto" = p."Codigo"
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE e."IdDeposito" = 101 AND e."Ativo" = true
-GROUP BY psg."Nome";
-
+select psg."Nome" as "Produtos Sub Grupo", 
+		e."IdDeposito" as "Deposito", 
+		sum(p."PrecoCusto") as "Soma do Preço de custo"
+from "Produtos" p 
+inner join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+inner join "Estoques" e on e."IdProduto" = p."Codigo"
+where e."IdDeposito" = 101
+group by "Produtos Sub Grupo", "Deposito"
+order by "Soma do Preço de custo" desc;
 
 
 
@@ -472,29 +471,29 @@ GROUP BY psg."Nome";
 -- Exercício 35
 -- Pergunta: Liste os produtos que estão em estoque em mais de um depósito.
 
--- Solução:
+select p."Nome" as "Produto", 
+		e."IdDeposito" as "Deposito", 
+		count(e."IdDeposito") as "Quantidade de Depositos"
+from "Estoques" e
+inner join "Produtos" p on e."IdProduto" = p."Codigo"
+group by "Produto", "Deposito"
+having count(distinct e."IdDeposito") > 1
 
-SELECT p."Nome"
-FROM public."Estoques" e
-JOIN public."Produtos" p ON e."IdProduto" = p."Codigo"
-WHERE e."Ativo" = true
-GROUP BY p."Nome"
-HAVING COUNT(DISTINCT e."IdDeposito") > 1;
 
 
 
 
 -- Exercício 36
--- Pergunta: Encontre o subgrupo cujo produto mais barato (menor preço de venda) é o mais barato entre todos os subgrupos. Ou seja, o menor preço de venda global e a qual subgrupo pertence.
+/* Encontre o subgrupo cujo produto mais barato (menor preço de venda) é o mais barato entre todos os subgrupos. 
+Ou seja, o menor preço de venda global e a qual subgrupo pertence. */
 
--- Solução:
-
-
-SELECT psg."Nome", p."Nome" AS produto, p."PrecoVenda"
-FROM public."Produtos" p
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE p."PrecoVenda" = (SELECT MIN("PrecoVenda") FROM public."Produtos" WHERE "Ativo" = true);
-
+select psg."Nome" as "Produto Sub Grupo",
+		p."Nome" as "Produto",
+		p."PrecoVenda" as "Preço de Venda"
+from "Produtos" p
+inner join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+where p."PrecoVenda" = (select min("PrecoVenda") 
+						from "Produtos")
 
 
 
@@ -502,14 +501,10 @@ WHERE p."PrecoVenda" = (SELECT MIN("PrecoVenda") FROM public."Produtos" WHERE "A
 -- Exercício 37
 -- Pergunta: Liste as empresas que não possuem nenhum depósito ativo.
 
--- Solução:
-
-SELECT e."Nome"
-FROM public."Empresas" e
-LEFT JOIN public."Depositos" d ON e."ID" = d."IdEmpresa" AND d."Ativo" = true
-WHERE d."Codigo" IS NULL AND e."Ativo" = true;
-
-
+SELECT e."Nome",  d."Ativo" as "Deposito Ativo"
+FROM "Empresas" e
+LEFT JOIN "Depositos" d ON e."ID" = d."IdEmpresa" 
+WHERE d."Codigo" IS NULL
 
 
 
@@ -517,20 +512,15 @@ WHERE d."Codigo" IS NULL AND e."Ativo" = true;
 -- Exercício 38
 -- Pergunta: Mostre a média do preço de venda por tipo de produto (TipoProduto em Produtos, que pode ser 'M' de mercadoria, etc.). Considere apenas produtos ativos.
 
--- Solução:
-
-SELECT "TipoProduto", AVG("PrecoVenda") AS media_preco
-FROM public."Produtos"
-WHERE "Ativo" = true AND "PrecoVenda" IS NOT NULL
-GROUP BY "TipoProduto";
+select "TipoProduto" as "Tipo de Produto", round(avg("PrecoVenda"),2) as "Média de Preço de Venda"
+from "Produtos" 
+where "Ativo"
+group by "Tipo de Produto"
 
 
 
 
-
-
-
-
+AQUI
 -- Exercício 39
 -- Pergunta: Para cada subgrupo, calcule o total de produtos e o total de produtos que estão inativos.
 
