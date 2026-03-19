@@ -580,19 +580,19 @@ and psg."Ativo" = false
 
 
 
-Aqui
+
 -- Exercício 43
 -- Pergunta: Mostre o nome da empresa, o nome do depósito e a quantidade de produtos em cada depósito (apenas empresas ativas e depósitos ativos).
 
--- Solução:
-
-SELECT e."Nome" AS empresa, d."Nome" AS deposito, COUNT(est."IdProduto") AS quantidade_produtos
-FROM public."Empresas" e
-JOIN public."Depositos" d ON e."ID" = d."IdEmpresa" AND d."Ativo" = true
-LEFT JOIN public."Estoques" est ON d."Codigo" = est."IdDeposito" AND est."Ativo" = true
-WHERE e."Ativo" = true
-GROUP BY e."Nome", d."Nome";
-
+select emp."Nome" as "Empresa",
+		d."Nome" as "Deposito",
+		count(e."IdProduto") as "Quantidade de Produtos"
+from "Estoques" e
+inner join "Depositos" d on d."Codigo" = e."IdDeposito"
+inner join "Empresas" emp on emp."ID" = e."IdEmpresa"
+where emp."Ativo"  
+and d."Ativo"
+group by "Empresa","Deposito"
 
 
 
@@ -601,14 +601,12 @@ GROUP BY e."Nome", d."Nome";
 -- Exercício 44
 -- Pergunta: Calcule a média do preço de custo dos produtos que estão em estoque, agrupados por empresa (através do campo IdEmpresa em Produtos).
 
--- Solução:
-
-SELECT p."IdEmpresa", AVG(p."PrecoCusto") AS media_custo
-FROM public."Estoques" e
-JOIN public."Produtos" p ON e."IdProduto" = p."Codigo"
-WHERE e."Ativo" = true AND p."Ativo" = true
-GROUP BY p."IdEmpresa";
-
+select p."IdEmpresa" as "Empresa",
+        round(avg(p."PrecoCusto"),2) as "Média dos Preçs de Custo"
+from "Produtos" p
+inner join "Estoques" e on e."IdProduto" = p."Codigo"
+where e."Ativo"
+group by "Empresa"
 
 
 
@@ -617,40 +615,29 @@ GROUP BY p."IdEmpresa";
 -- Exercício 45
 -- Pergunta: Liste as contas contábeis que são do tipo 'R' (receita) e que possuem pelo menos uma subconta (ou seja, que são contas pai, campo ContaPai = true).
 
--- Solução:
-
-sql
-SELECT "ID", "Nome"
-FROM public."Contas"
-WHERE "Tipo" = 'R' AND "ContaPai" = true AND "Ativo" = true;
-
-
+select "Tipo" as "Tipo Conta", 
+		"Nome",
+		count("ContaPai") as "Quantidade de SubContas"
+from "Contas"
+where "Tipo" = 'R'
+and "ContaPai" 
+group by "Tipo Conta","Nome"
+having count("ContaPai") >= 1
+order by "Quantidade de SubContas" desc
 
 
 
 
 
 -- Exercício 46
--- Pergunta: Para cada subgrupo, mostre o produto com maior preço de venda e o produto com menor preço de venda (em duas colunas separadas). Use subconsultas ou DISTINCT ON.
+-- Pergunta: Para cada subgrupo, mostre o produto com maior preço de venda e o produto com menor preço de venda (em duas colunas separadas). 
 
--- Solução (usando DISTINCT ON):
-
-SELECT DISTINCT ON (psg."Nome") 
-       psg."Nome" AS subgrupo,
-       FIRST_VALUE(p."Nome") OVER (PARTITION BY psg."Nome" ORDER BY p."PrecoVenda" DESC) AS produto_mais_caro,
-       FIRST_VALUE(p."Nome") OVER (PARTITION BY psg."Nome" ORDER BY p."PrecoVenda" ASC) AS produto_mais_barato
-FROM public."Produtos" p
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE p."Ativo" = true;
-
--- Ou de forma mais simples, mas com duas subconsultas:
-
-SELECT psg."Nome",
-       (SELECT p1."Nome" FROM public."Produtos" p1 WHERE p1."IdSubGrupo" = psg."Codigo" AND p1."Ativo" = true ORDER BY p1."PrecoVenda" DESC LIMIT 1) AS mais_caro,
-       (SELECT p2."Nome" FROM public."Produtos" p2 WHERE p2."IdSubGrupo" = psg."Codigo" AND p2."Ativo" = true ORDER BY p2."PrecoVenda" ASC LIMIT 1) AS mais_barato
-FROM public."ProdutosSubGrupo" psg
-WHERE psg."Ativo" = true;
-
+select psg."Nome" as "Produto Sub Grupo",
+		max(p."PrecoVenda") as "Maior Preço de Venda",
+		min(p."PrecoVenda") as "Menor Preço de Venda"
+from "Produtos" p 
+inner join "ProdutosSubGrupo" psg on psg."Codigo" = p."IdSubGrupo"
+group by "Produto Sub Grupo"
 
 
 
@@ -659,21 +646,19 @@ WHERE psg."Ativo" = true;
 -- Exercício 47
 -- Pergunta: Encontre produtos cujo preço de venda seja superior à média de preço de venda do seu próprio subgrupo.
 
--- Solução:
-
-SELECT p."Nome", p."PrecoVenda", psg."Nome" AS subgrupo
-FROM public."Produtos" p
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE p."PrecoVenda" > (
-    SELECT AVG(p2."PrecoVenda")
-    FROM public."Produtos" p2
-    WHERE p2."IdSubGrupo" = p."IdSubGrupo" AND p2."Ativo" = true
-) AND p."Ativo" = true;
+select p."Nome" as "Produtos", 
+		round(p."PrecoVenda",2) as "Preço de Venda"
+from "Produtos" p 
+inner join "ProdutosSubGrupo" psg on psg."Codigo" = p."IdSubGrupo"
+where p."PrecoVenda" > (select avg(p2."PrecoVenda") 
+						from "Produtos" p2
+						where p2."IdSubGrupo" = p."IdSubGrupo"
+						)
 
 
 
 
-
+AQUI
 -- Exercício 48
 -- Pergunta: Liste os subgrupos que têm produtos com preço de custo acima de 10 e também produtos com preço de custo abaixo de 5. (Ou seja, que possuem produtos em ambas as faixas.)
 
