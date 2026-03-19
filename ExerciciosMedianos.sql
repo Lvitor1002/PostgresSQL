@@ -520,36 +520,35 @@ group by "Tipo de Produto"
 
 
 
-AQUI
+
 -- Exercício 39
 -- Pergunta: Para cada subgrupo, calcule o total de produtos e o total de produtos que estão inativos.
 
--- Solução:
-
-SELECT psg."Nome",
-       COUNT(p."Codigo") AS total,
-       SUM(CASE WHEN p."Ativo" = false THEN 1 ELSE 0 END) AS inativos
-FROM public."ProdutosSubGrupo" psg
-LEFT JOIN public."Produtos" p ON psg."Codigo" = p."IdSubGrupo"
-GROUP BY psg."Nome";
+select psg."Nome" as "Produtos Sub Grupo",
+		count(p."Codigo") as "Total de Produtos",
+		sum(case when p."Ativo" = false 
+			then 1 else 0 end
+			) as "Total de Produtos Ativos"
+from "Produtos" p 
+inner join "ProdutosSubGrupo" psg on p."IdSubGrupo" = psg."Codigo"
+group by "Produtos Sub Grupo"
+order by "Total de Produtos" desc
 
 
 
 
 
 -- Exercício 40
--- Pergunta: Liste os produtos que têm o mesmo nome (duplicados) – considerando que a tabela Produtos tem constraint UN_NomeProduto unique, então não há duplicatas. Mas podemos simular procurando por nomes semelhantes (ex: contendo palavras iguais). Vamos simplificar: encontrar produtos cujo nome aparece mais de uma vez (ignorando a constraint). Como a constraint impede, não haverá. Então faremos um exercício alternativo: produtos que pertencem a mais de um subgrupo? Isso não é possível. Outra ideia: listar produtos que estão em mais de um depósito (já feito no 35). Vamos mudar: listar os subgrupos que têm produtos com preço de venda acima de 50, e contar quantos produtos em cada.
+-- Pergunta: Listar os subgrupos que têm produtos com preço de venda acima de 50, e contar quantos produtos em cada.
 
--- Solução alternativa:
-
-SELECT psg."Nome", COUNT(p."Codigo") AS qtde
-FROM public."Produtos" p
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE p."PrecoVenda" > 50 AND p."Ativo" = true
-GROUP BY psg."Nome";
-
-
-
+select psg."Nome" as "Produtos Sub Grupo",
+		p."PrecoVenda" as "Preço de Venda",
+		count(p."Codigo") as "Quantidade de Produtos"
+from "Produtos" p
+inner join "ProdutosSubGrupo" psg on psg."Codigo" = p."IdSubGrupo"
+where p."PrecoVenda" > 50
+group by "Produtos Sub Grupo", "Preço de Venda"
+order by "Quantidade de Produtos" desc
 
 
 
@@ -557,18 +556,11 @@ GROUP BY psg."Nome";
 -- Exercício 41
 -- Pergunta: Encontre o depósito que tem a maior soma de preços de custo dos produtos estocados (considerando cada produto uma unidade).
 
--- Solução:
-
-SELECT d."Nome", SUM(p."PrecoCusto") AS soma_custo
-FROM public."Estoques" e
-JOIN public."Produtos" p ON e."IdProduto" = p."Codigo"
-JOIN public."Depositos" d ON e."IdDeposito" = d."Codigo"
-WHERE e."Ativo" = true
-GROUP BY d."Nome"
-ORDER BY soma_custo DESC
-LIMIT 1;
-
-
+select e."IdDeposito" as "Deposito",
+		round(sum(p."PrecoCusto"),2) as "Maior Soma dos Preços de Custo"
+from "Produtos" p
+inner join "Estoques" e on e."IdProduto" = p."Codigo"
+group by "Deposito"
 
 
 
@@ -576,19 +568,19 @@ LIMIT 1;
 -- Exercício 42
 -- Pergunta: Liste os produtos que estão em estoque no depósito 101, mas cujo subgrupo está inativo.
 
--- Solução:
-
-SELECT p."Nome"
-FROM public."Estoques" e
-JOIN public."Produtos" p ON e."IdProduto" = p."Codigo"
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE e."IdDeposito" = 101 AND e."Ativo" = true AND psg."Ativo" = false;
-
-
-
+select p."Nome" as "Produto",
+		e."IdDeposito" as "Deposito",
+		psg."Ativo" as "Produtos Sub Grupo"
+from "Estoques" e 
+inner join "Produtos" p on p."Codigo" = e."IdProduto"
+inner join "ProdutosSubGrupo" psg on psg."Codigo" = p."IdSubGrupo"
+where e."IdDeposito" = 101
+and psg."Ativo" = false
 
 
 
+
+Aqui
 -- Exercício 43
 -- Pergunta: Mostre o nome da empresa, o nome do depósito e a quantidade de produtos em cada depósito (apenas empresas ativas e depósitos ativos).
 
