@@ -658,55 +658,51 @@ where p."PrecoVenda" > (select avg(p2."PrecoVenda")
 
 
 
-AQUI
 -- Exercício 48
--- Pergunta: Liste os subgrupos que têm produtos com preço de custo acima de 10 e também produtos com preço de custo abaixo de 5. (Ou seja, que possuem produtos em ambas as faixas.)
+-- Liste os subgrupos que têm produtos com preço de custo acima de 10 e também produtos com preço de custo abaixo de 5. (Ou seja, que possuem produtos em ambas as faixas.)
 
--- Solução:
-
-SELECT psg."Nome"
-FROM public."Produtos" p
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE p."Ativo" = true
-GROUP BY psg."Nome"
-HAVING MAX(CASE WHEN p."PrecoCusto" > 10 THEN 1 ELSE 0 END) = 1
-   AND MAX(CASE WHEN p."PrecoCusto" < 5 THEN 1 ELSE 0 END) = 1;
-
-
+select psg."Nome" as "Produtos Sub Grupo",
+		p."PrecoCusto" as "Preço de Custo"
+from "Produtos" p 
+inner join "ProdutosSubGrupo" psg on psg."Codigo" = p."IdSubGrupo"
+group by "Produtos Sub Grupo", "Preço de Custo"
+having max(case when p."PrecoCusto" > 10 then 1 else 0 end) = 1
+and max(case when p."PrecoCusto" < 5 then 1 else 0 end) = 1
 
 
 
 -- Exercício 49
--- Pergunta: Para cada empresa, mostre o total de produtos ativos, o total de depósitos ativos e o total de estoques (número de registros em Estoques). Utilize joins e agregação.
-
--- Solução:
-
-SELECT e."Nome",
-       COUNT(DISTINCT p."Codigo") AS total_produtos,
-       COUNT(DISTINCT d."Codigo") AS total_depositos,
-       COUNT(est."IdProduto") AS total_estoques
-FROM public."Empresas" e
-LEFT JOIN public."Produtos" p ON e."ID" = p."IdEmpresa" AND p."Ativo" = true
-LEFT JOIN public."Depositos" d ON e."ID" = d."IdEmpresa" AND d."Ativo" = true
-LEFT JOIN public."Estoques" est ON d."Codigo" = est."IdDeposito" AND est."Ativo" = true
-WHERE e."Ativo" = true
-GROUP BY e."Nome";
+/*
+	Para cada empresa, mostre o total de produtos ativos, o total de depósitos ativos e o total de estoques (número de registros em Estoques). 
+	Utilize joins e agregação.
+*/
+select e."Nome" as "Empresa", 
+		count(p."Codigo") as "Total de Produtos Ativos",
+		count(d."Codigo") as "Total de Depositos Ativos",
+		count(est."Codigo") as "Total de Estoques Ativos"
+from "Empresas" e
+inner join "Produtos" p on p."IdEmpresa" = e."ID" 
+inner join "Depositos" d on d."IdEmpresa" = e."ID"
+inner join "Estoques" est on est."IdDeposito" = d."Codigo"
+where p."Ativo" and d."Ativo" 
+group by "Empresa"
 
 
 
 
 
 -- Exercício 50
--- Pergunta: Crie uma consulta que retorne um ranking dos produtos por preço de venda dentro de cada subgrupo, exibindo posição (1, 2, 3...) juntamente com nome do produto, subgrupo e preço.
-
--- Solução:
-
-SELECT psg."Nome" AS subgrupo, p."Nome" AS produto, p."PrecoVenda",
-        RANK() OVER (PARTITION BY p."IdSubGrupo ORDER BY p."PrecoVenda" DESC) AS ranking
-FROM public."Produtos" p
-JOIN public."ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
-WHERE p."Ativo" = true
-ORDER BY psg."Nome", ranking;
+/*
+Crie uma consulta que retorne um ranking dos produtos por preço de venda dentro de cada subgrupo, 
+exibindo posição (1, 2, 3...) juntamente com nome do produto, subgrupo e preço.
+*/
+select psg."Nome" as "Produto Sub Grupo",
+		p."Nome" as "Produto",
+		p."PrecoVenda" as "Preço de Venda",
+		RANK() OVER (PARTITION BY p."IdSubGrupo" ORDER BY p."PrecoVenda" DESC) AS ranking
+from "Produtos" p
+join "ProdutosSubGrupo" psg ON p."IdSubGrupo" = psg."Codigo"
+order by psg."Nome", ranking
 
 
 
@@ -720,7 +716,7 @@ ORDER BY psg."Nome", ranking;
 
 
 
-
+AQUI
 -- Pergunta: Liste a hierarquia completa das contas contábeis (tabela Contas), exibindo o caminho completo (ex: "1.1.1 – Nome da conta") e o nível (1 a 4). Utilize uma CTE recursiva para percorrer a árvore.
 -- Solução:
 
