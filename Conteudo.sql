@@ -267,3 +267,57 @@ where "Nome" like '%a'
 select "Nome" as "Nome Vendedores" from "Vendedor"
 where "Nome" not like 'A%'
 
+
+-- Obter apenas o dia mês e ano
+select "DataPedido" as "Data do Pedido",
+		extract(day from "DataPedido") as "Apenas o dia",
+		extract(month from "DataPedido") as "Apenas o mês",
+		extract(year from "DataPedido") as "Apenas o Ano"
+from "Pedido"
+
+
+-- Obter do nome apenas os caracteres do 1 ao 5
+select "Nome", 
+        substring("Nome" from 1 for 5) as "Caracteres do 1 ao 5",
+        substring("Nome", 2) as "Nome a partir do 3ª char"
+from "Cliente"
+
+
+
+-- Usando o coalesce
+select "Nome", "Cpf", coalesce("Cpf", 'Não Informado') from "Cliente"
+
+
+
+-- Sigla de gênero por extenso
+select
+    case "Genero" when 'M' then 'Masculino' else 'Feminino'
+end as "Genero"
+from "Cliente"
+
+
+
+-- O nome do cliente e somente o mês de nascimento. Caso a data de nascimento não esteja preenchida mostrar a mensagem “Não informado”.
+select "Nome", 
+		case when "DataNascimento" is null 
+			then 'Não informado' 
+			else extract(month from "DataNascimento")::text
+		end as "Somente o mês de nascimento"
+from "Cliente"
+
+
+
+-- O nome do cliente e somente o nome do mês de nascimento (Janeiro, Fevereiro etc). Caso a data de nascimento não esteja preenchida mostrar a mensagem “Não informado”.
+Aqui
+-- O nome do cliente e somente o ano de nascimento. Caso a data de nascimento não esteja preenchida mostrar a mensagem “Não informado”.
+
+-- O caractere 5 até o caractere 10 de todos os municípios.
+
+-- O nome de todos os municípios em letras maiúsculas.
+
+-- O nome do cliente e o gênero. Caso seja M mostrar “Masculino”, senão mostrar “Feminino”.
+
+-- O nome do produto e o valor. Caso o valor seja maior do que R$ 500,00 mostrar a mensagem “Acima de 500”, caso contrário, mostrar a mensagem “Abaixo de 500”.
+
+
+https://www.udemy.com/course/banco-de-dados-sql-postgresql/learn/lecture/36137812/?udfrontends=true

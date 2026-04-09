@@ -715,7 +715,6 @@ order by psg."Nome", ranking
 
 
 
-
 AQUI
 -- Pergunta: Liste a hierarquia completa das contas contábeis (tabela Contas), exibindo o caminho completo (ex: "1.1.1 – Nome da conta") e o nível (1 a 4). Utilize uma CTE recursiva para percorrer a árvore.
 -- Solução:
