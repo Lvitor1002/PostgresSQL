@@ -299,25 +299,53 @@ from "Cliente"
 
 -- O nome do cliente e somente o mês de nascimento. Caso a data de nascimento não esteja preenchida mostrar a mensagem “Não informado”.
 select "Nome", 
-		case when "DataNascimento" is null 
-			then 'Não informado' 
-			else extract(month from "DataNascimento")::text
-		end as "Somente o mês de nascimento"
+    case when "DataNascimento" is null then 'Não informado' 
+    else extract(month from "DataNascimento")::text
+end as "Somente o mês de nascimento"
 from "Cliente"
 
 
 
 -- O nome do cliente e somente o nome do mês de nascimento (Janeiro, Fevereiro etc). Caso a data de nascimento não esteja preenchida mostrar a mensagem “Não informado”.
-Aqui
+select "Nome", 
+	case when "DataNascimento" is null then 'Não Informado'
+	else trim(to_char("DataNascimento", 'TMMonth'))
+end as "Mês de Nascimento"
+from "Cliente"
+
+
 -- O nome do cliente e somente o ano de nascimento. Caso a data de nascimento não esteja preenchida mostrar a mensagem “Não informado”.
+select "Nome",
+	case when "DataNascimento" is null then 'Não Informado'
+	else extract(year from "DataNascimento")::text
+end as "Ano de Nascimento"
+from "Cliente"
+
 
 -- O caractere 5 até o caractere 10 de todos os municípios.
+select  "Nome",
+		substring("Nome" from 5 for 10) as "Caractere 5 até o caractere 10 dos municípios"
+from "Municipio"
+
 
 -- O nome de todos os municípios em letras maiúsculas.
+select upper("Nome") as "Municípios com letras maiúsculas" from "Municipio"
+
 
 -- O nome do cliente e o gênero. Caso seja M mostrar “Masculino”, senão mostrar “Feminino”.
+select "Nome", 
+		case when "Genero" = 'M' then 'Masculino' else 'Feminino'
+end as "Gênero"
+from "Cliente"
+
+
 
 -- O nome do produto e o valor. Caso o valor seja maior do que R$ 500,00 mostrar a mensagem “Acima de 500”, caso contrário, mostrar a mensagem “Abaixo de 500”.
+select "Nome" as "Nome do Produto", 
+		"Valor" as "Valor do Produto",
+		case when "Valor" > 500 then 'Acima de 500' else 'Abaixo de 500'
+end as "Descrição do Valor do Produto"
+from "Produto"
 
 
 https://www.udemy.com/course/banco-de-dados-sql-postgresql/learn/lecture/36137812/?udfrontends=true
