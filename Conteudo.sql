@@ -355,3 +355,22 @@ select "DataPedido" as "Data do Pedido",
 from "Pedido"
 where "Valor" > (select avg("Valor") from "Pedido")
 group by "Data do Pedido","Valor"
+
+
+--                                                              Subconsultas
+
+-- A data e o valor dos pedidos que o valor do pedido seja menor que a média de todos os pedidos.
+
+-- A data,o valor, o cliente e o vendedor dos pedidos que possuem 2 ou mais produtos.
+
+-- O nome dos clientes que moram na mesma cidade da transportadora BSTransportes.
+
+-- O nome do cliente e o município dos clientes que estão localizados no mesmo município de qualquer uma das transportadoras.
+
+-- Atualizar o valor do pedido em 5% para os pedidos que o somatório do valor total dos produtos daquele pedido seja maior que a média do valor total
+
+-- todos os produtos de todos os pedidos.
+
+-- O nome do cliente e a quantidade de pedidos feitos pelo cliente.
+
+-- Para revisar, refaça o exercício anterior (número 07) utilizando group by e mostrando somente os clientes que fizeram pelo menos um pedido.
