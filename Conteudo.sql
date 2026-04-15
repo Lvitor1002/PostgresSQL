@@ -348,4 +348,10 @@ end as "Descrição do Valor do Produto"
 from "Produto"
 
 
-https://www.udemy.com/course/banco-de-dados-sql-postgresql/learn/lecture/36137812/?udfrontends=true
+
+-- Selecionar a data do pedido e o valor, onde o valor seja maior que a média dos valores de todos os pedidos
+select "DataPedido" as "Data do Pedido", 
+		"Valor"
+from "Pedido"
+where "Valor" > (select avg("Valor") from "Pedido")
+group by "Data do Pedido","Valor"
