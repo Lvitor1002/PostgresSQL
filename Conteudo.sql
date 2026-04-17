@@ -360,6 +360,11 @@ group by "Data do Pedido","Valor"
 --                                                              Subconsultas
 
 -- A data e o valor dos pedidos que o valor do pedido seja menor que a média de todos os pedidos.
+select "DataPedido" as "Data do Pedido",
+		"Valor" as "Pedidos com valores menores que R$1720"
+from "Pedido"
+where "Valor" < (select avg("Valor") from "Pedido")
+
 
 -- A data,o valor, o cliente e o vendedor dos pedidos que possuem 2 ou mais produtos.
 
