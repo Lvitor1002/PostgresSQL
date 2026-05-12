@@ -367,6 +367,29 @@ where "Valor" < (select avg("Valor") from "Pedido")
 
 
 -- A data,o valor, o cliente e o vendedor dos pedidos que possuem 2 ou mais produtos.
+-- A data, o valor, o cliente e o vendedor dos pedidos que possuem 2 ou mais produtos.
+select
+		p."DataPedido" as "Data do Pedido",
+		p."Valor" as "Valor do Pedido",
+		c."Nome" as "Cliente",
+		v."Nome" as "Vendedor",
+		pr."Nome" as "Produto",
+		pr."IdProduto"
+from "Pedido" p
+inner join "Cliente" c on p."IdCliente" = c."IdCliente"
+inner join "Vendedor" v on p."IdVendedor" = v."IdVendedor"
+inner join "PedidoProduto" pp on p."IdPedido" = pp."IdPedido"
+inner join "Produto" pr on pp."IdProduto" = pr."IdProduto"
+group by 
+    p."DataPedido",
+    p."Valor",
+    c."Nome",
+    v."Nome",
+    pr."Nome",
+	pr."IdProduto"
+having count(pp."IdProduto") >= 2;
+
+		
 
 -- O nome dos clientes que moram na mesma cidade da transportadora BSTransportes.
 
