@@ -366,7 +366,8 @@ from "Pedido"
 where "Valor" < (select avg("Valor") from "Pedido")
 
 
--- A data,o valor, o cliente e o vendedor dos pedidos que possuem 2 ou mais produtos.
+
+
 -- A data, o valor, o cliente e o vendedor dos pedidos que possuem 2 ou mais produtos.
 select
 		p."DataPedido" as "Data do Pedido",
@@ -391,14 +392,24 @@ having count(pp."IdProduto") >= 2;
 
 		
 
--- O nome dos clientes que moram na mesma cidade da transportadora BSTransportes.
-
--- O nome do cliente e o município dos clientes que estão localizados no mesmo município de qualquer uma das transportadoras.
-
--- Atualizar o valor do pedido em 5% para os pedidos que o somatório do valor total dos produtos daquele pedido seja maior que a média do valor total
 
 -- todos os produtos de todos os pedidos.
+select pro."Nome" as "Nome dos Produtos", 
+		pp."ValorUnitario" as "Valor Unitario",
+		pe."Valor" as "Total do Pedido" 
+from "PedidoProduto" pp 
+inner join "Produto" pro on pp."IdProduto" = pro."IdProduto"
+inner join "Pedido" pe on pp."IdPedido" = pe."IdPedido"
+
+
+
 
 -- O nome do cliente e a quantidade de pedidos feitos pelo cliente.
 
+
 -- Para revisar, refaça o exercício anterior (número 07) utilizando group by e mostrando somente os clientes que fizeram pelo menos um pedido.
+
+
+
+-- Atualizar o valor do pedido em 5% para os pedidos que o somatório do valor total dos produtos daquele pedido seja maior que a média do valor total
+    Falta esse 
