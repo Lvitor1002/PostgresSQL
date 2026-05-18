@@ -405,11 +405,38 @@ inner join "Pedido" pe on pp."IdPedido" = pe."IdPedido"
 
 
 -- O nome do cliente e a quantidade de pedidos feitos pelo cliente.
+select c."Nome" as "Nome do Cliente",
+		count(p."IdPedido") as "Quantidade de Pedidos"
+from "Pedido" p
+inner join "Cliente" c on c."IdCliente" = p."IdCliente"
+group by "Nome do Cliente"
+
+
 
 
 -- Para revisar, refaça o exercício anterior (número 07) utilizando group by e mostrando somente os clientes que fizeram pelo menos um pedido.
+select c."Nome" as "Nome do Cliente",
+		count(p."IdPedido") as "Quantidade de Pedidos"
+from "Pedido" p
+inner join "Cliente" c on c."IdCliente" = p."IdCliente"
+group by "Nome do Cliente"
+having count(p."IdPedido") >= 1;
 
 
 
--- Atualizar o valor do pedido em 5% para os pedidos que o somatório do valor total dos produtos daquele pedido seja maior que a média do valor total
-    Falta esse 
+
+
+-- Atualizar o valor do pedido em 5% para os pedidos que o somatório do valor total dos produtos daquele pedido seja maior que a média do valor total de todos os produtos de todos os pedidos
+
+update "Pedido" set "Valor" = "Valor" + ("Valor" * 0.05)
+where
+(
+	select sum(pp."ValorUnitario") as "Soma dos valores unitários"
+	from "PedidoProduto" pp
+	where pp."IdPedido" = "Pedido"."IdPedido"
+
+) > (select round(avg("ValorUnitario"),2) from "PedidoProduto")
+
+
+		
+
