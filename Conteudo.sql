@@ -438,5 +438,19 @@ where
 ) > (select round(avg("ValorUnitario"),2) from "PedidoProduto")
 
 
-		
 
+-- Views
+
+create view "Cliente_profissao" as
+select c."Nome" as "Cliente"
+        p."Nome" as "Profissão"
+from "Cliente" c  
+inner join "Profissao" p on c."IdProfissao" = p."IdProfissao"
+
+select * from "Cliente_profissao";
+
+
+
+-- Índices no PostgreSQL são utilizados para otimizar consultas frequentes, aumentando a velocidade de busca e recuperação de dados.
+-- exemplo: 
+            create index idx_cli_nome on "Cliente" (nome)
