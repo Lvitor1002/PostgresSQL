@@ -232,7 +232,15 @@ Data_Devolucao      Data e não nulo
 Valor               Decimal e não nulo
 Devolvido           Caractere e não nulo (somente um caractere)
 
-
+create table EMPRESTIMO(
+"IdEmprestimo" int not null primary key generated always as identity,
+"IdAluno" int not null,
+"Data_Emprestimo" date not null DEFAULT CURRENT_DATE, 
+"Data_Devolucao" date not null,
+"Valor" decimal(10,2) not null,
+"Devolvido" char(1) not null, 
+constraint FK_EMPRESTIMO_Aluno foreign key("IdAluno") references ALUNO("IdAluno")
+);
 
 
 
@@ -242,17 +250,26 @@ Devolvido           Caractere e não nulo (somente um caractere)
 15. Insira os dados abaixo na tabela EMPRESTIMO.
 IdAluno     Emprestimo      Devolucao       Valor       Devolvido
 ----------------------------------------------------------------------
-Mario       02/05/2012      12/05/2012       10,00       S
-Mario       23/04/2012      03/05/2012       5,00        N
-João        10/05/2012      20/05/2012       12,00       N
-Paulo       10/05/2012      20/05/2012       8,00        S
-Pedro       05/05/2012      15/05/2012       15,00       N
-Pedro       07/05/2012      17/05/2012       20,00       S
-Pedro       08/05/2012      18/05/2012       5,00        S
+1           02/05/2012      12/05/2012       10,00       S
+2           23/04/2012      03/05/2012       5,00        N
+3           10/05/2012      20/05/2012       12,00       N
+4           10/05/2012      20/05/2012       8,00        S
+5           05/05/2012      15/05/2012       15,00       N
 
+insert into EMPRESTIMO("IdAluno","Data_Emprestimo","Data_Devolucao","Valor","Devolvido")
+				values(1,'02/05/2012','12/05/2012',10.00,'s');
 
-
-
+insert into EMPRESTIMO("IdAluno","Data_Emprestimo","Data_Devolucao","Valor","Devolvido")
+				values(2,'23/04/2012','03/05/2012',5.00,'n');
+				
+insert into EMPRESTIMO("IdAluno","Data_Emprestimo","Data_Devolucao","Valor","Devolvido")
+				values(3,'10/05/2012','20/05/2012',12.00,'n');
+				
+insert into EMPRESTIMO("IdAluno","Data_Emprestimo","Data_Devolucao","Valor","Devolvido")
+				values(4,'10/05/2012','20/05/2012',8.00,'s');
+				
+insert into EMPRESTIMO("IdAluno","Data_Emprestimo","Data_Devolucao","Valor","Devolvido")
+				values(5,'05/05/2012','15/05/2012',15.00,'n');
 
 =================================================================
 16. Crie uma tabela chamada EMPRESTIMO_LIVRO, de acordo com os dados abaixo:
@@ -263,7 +280,13 @@ IdLivro             Inteiro, não nulo e chave estrangeira para a tabela LIVRO
 
 Chave primária composta com os campos IdEmprestimo e IdLivro
 
-
+create table EMPRESTIMO_LIVRO(
+"IdEmprestimo" int not null,
+"IdLivro" int not null,
+constraint PK_EMPRESTIMO_LIVRO primary key("IdEmprestimo","IdLivro"),
+constraint FK_EMPRESTIMOLIVRO_Emprestimo foreign key("IdEmprestimo") references EMPRESTIMO("IdEmprestimo"),
+constraint FK_EMPRESTIMOLIVRO_Livro foreign key("IdLivro") references LIVRO("IdLivro")
+)
 
 
 =================================================================
@@ -292,36 +315,93 @@ IdLivro:
         Bando de Dados – 1 Edição
         PHP com Programação Orientada a Objetos
 
+insert into EMPRESTIMO_LIVRO("IdEmprestimo","IdLivro") values(1,1);
+insert into EMPRESTIMO_LIVRO("IdEmprestimo","IdLivro") values(2,2);
+insert into EMPRESTIMO_LIVRO("IdEmprestimo","IdLivro") values(3,3);
+insert into EMPRESTIMO_LIVRO("IdEmprestimo","IdLivro") values(4,4);
+insert into EMPRESTIMO_LIVRO("IdEmprestimo","IdLivro") values(5,4);
+
+
 =================================================================
 18. Crie os seguintes índices:
 Tabela          |   Campo
 Emprestimo          Emprestimo
 Emprestimo          Devolução
 
+create index idx_emprestimo_dataEmprestimo on EMPRESTIMO("Data_Emprestimo")
+
+create index idx_emprestimo_dataDevolucao on EMPRESTIMO("Data_Devolucao")
 
 
 
 =================================================================
 CONSULTAS SIMPLES
-19. O nome dos autores em ordem alfabética.
-20. O nome dos alunos que começam com a letra P.
-21. O nome dos livros da categoria Banco de Dados ou Java.
-22. O nome dos livros da editora Bookman.
-23. Os empréstimos realizados entre 05/05/2012 e 10/05/2012.
-24. Os empréstimos que não foram feitos entre 05/05/2012 e 10/05/2012
-25. Os empréstimos que os livros já foram devolvidos.
 
+19. O nome dos autores em ordem alfabética.
+select "Nome" as "Autores" 
+from AUTOR 
+order by "Nome" asc
+
+
+20. O nome dos alunos que começam com a letra P.
+select "Nome" as "Alunos"
+from ALUNO
+where "Nome" like 'P%'
+
+
+21. O nome dos livros da categoria Banco de Dados ou Java.
+select l."Nome" as "Livros",
+		c."Nome" as "Categorias"
+from LIVRO l
+inner join CATEGORIA c on c."IdCategoria" = l."IdCategoria"
+where (c."Nome" = 'Banco de Dados' or c."Nome" = 'Java')
+
+
+22. O nome dos livros da editora Bookman.
+select l."Nome" as "Livros",
+		e."Nome" as "Editora"
+from LIVRO l
+inner join EDITORA e on e."IdEditora" = l."IdEditora"
+where e."Nome" = 'Bookman'
+
+
+23. Os empréstimos realizados entre 05/05/2012 e 10/05/2012.
+select * from EMPRESTIMO
+where "Data_Emprestimo" between '05-05-2012' and '10-05-2012'
+
+
+24. Os empréstimos que não foram feitos entre 05/05/2012 e 10/05/2012
+select * from EMPRESTIMO
+where "Data_Emprestimo" not between '05-05-2012' and '10-05-2012'
+
+
+25. Os empréstimos que os livros já foram devolvidos.
+select * from EMPRESTIMO
+where "Devolvido" = 's'
 
 
 
 =================================================================
 CONSULTAS COM AGRUPAMENTO SIMPLES
+
 26. A quantidade de livros.
+
+
 27. O somatório do valor dos empréstimos.
+
+
 28. A média do valor dos empréstimos.
+
+
 29. O maior valor dos empréstimos.
+
+
 30. O menor valor dos empréstimos.
+
+
 31. O somatório do valor do empréstimo que estão entre 05/05/2012 e 10/05/2012.
+
+
 32. A quantidade de empréstimos que estão entre 01/05/2012 e 05/05/2012.
 
 
