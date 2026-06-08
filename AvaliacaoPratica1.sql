@@ -385,46 +385,122 @@ where "Devolvido" = 's'
 CONSULTAS COM AGRUPAMENTO SIMPLES
 
 26. A quantidade de livros.
+select count("IdLivro") as "Quantidade de Livros" 
+from LIVRO;
 
 
 27. O somatório do valor dos empréstimos.
+select sum("Valor") as "Valor Total dos Empréstimos"
+from EMPRESTIMO
 
 
 28. A média do valor dos empréstimos.
+select round(avg("Valor"),2) as "Média dos valores de Empréstimos"
+from EMPRESTIMO
 
 
 29. O maior valor dos empréstimos.
+select max("Valor") as "Maior valor dos Empréstimos"
+from EMPRESTIMO
+
 
 
 30. O menor valor dos empréstimos.
+select min("Valor") as "Maior valor dos Empréstimos"
+from EMPRESTIMO
+
 
 
 31. O somatório do valor do empréstimo que estão entre 05/05/2012 e 10/05/2012.
+select sum("Valor") as "Valor Total dos Empréstimos"
+from EMPRESTIMO
+where "Data_Emprestimo" between '05-05-2012' and '10-05-2012' 
+
 
 
 32. A quantidade de empréstimos que estão entre 01/05/2012 e 05/05/2012.
+select count("Valor") as "Quantidade de Empréstimos"
+from EMPRESTIMO
+where "Data_Emprestimo" between '01-05-2012' and '05-05-2012'
 
 
 
 
 =================================================================
 CONSULTAS COM JOIN
-33. O nome do livro, a categoria e a editora (LIVRO) – fazer uma view
-34. O nome do livro e o nome do autor (LIVRO_AUTOR) – fazer uma view.
-35. O nome dos livros do autor Ian Graham (LIVRO_AUTOR).
-36. O nome do aluno, a data do empréstimo e a data de devolução (EMPRESTIMO).
-37. O nome de todos os livros que foram emprestados (EMPRESTIMO_LIVRO).
 
+33. O nome do livro, a categoria e a editora (LIVRO) – fazer uma view
+create view VW_CONSULTA_LIVRO_CATEGORIA_EDITORA as
+select l."Nome" as "Nome dos Livros",
+		c."Nome" as "Nome das Categorias",
+		e."Nome" as "Nome das Editoras"
+from LIVRO l
+inner join CATEGORIA c on c."IdCategoria" = l."IdCategoria"
+inner join EDITORA e on e."IdEditora" = l."IdEditora"
+
+select * from VW_CONSULTA_LIVRO_CATEGORIA_EDITORA
+
+
+
+34. O nome do livro e o nome do autor (LIVRO_AUTOR) – fazer uma view.
+create view VW_CONSULTA_LIVRO_AUTOR as
+select l."Nome" as "Nome dos Livros",
+		a."Nome" as "Nome dos Autores"
+from LIVRO_AUTOR la
+inner join LIVRO l on l."IdLivro" = la."IdLivro"
+inner join AUTOR a on a."IdAutor" = la."IdAutor"
+
+select * from VW_CONSULTA_LIVRO_AUTOR
+
+
+
+35. O nome dos livros do autor Ian Graham (LIVRO_AUTOR).
+select l."Nome" as "Nome do Livro",
+		a."Nome" as "Nome do Autor"
+from LIVRO_AUTOR la
+inner join LIVRO l on l."IdLivro" = la."IdLivro"
+inner join AUTOR a on a."IdAutor" = la."IdAutor"
+where a."Nome" = 'Ian Graham'
+
+
+
+36. O nome do aluno, a data do empréstimo e a data de devolução (EMPRESTIMO).
+select a."Nome" as "Nome do Aluno",
+		e."Data_Emprestimo" as "Data do Empréstimo",
+		e."Data_Devolucao" as "Data de Devolução"
+from EMPRESTIMO e
+inner join ALUNO a on a."IdAluno" = e."IdAluno"
+
+
+37. O nome de todos os livros que foram emprestados (EMPRESTIMO_LIVRO).
+select l."Nome" as "Nome dos Livros",
+		e."Devolvido" as "Livros Devolvidos"
+from EMPRESTIMO_LIVRO el
+inner join LIVRO l on l."IdLivro" = el."IdLivro"
+inner join EMPRESTIMO e on e."IdEmprestimo" = el."IdEmprestimo"
+where e."Devolvido" = 'n'
 
 
 
 =================================================================
 CONSULTAS COM AGRUPAMENTO + JOIN
+
 38. O nome da editora e a quantidade de livros de cada editora (LIVRO).
+
+
 39. O nome da categoria e a quantidade de livros de cada categoria (LIVRO).
+
+
 40. O nome do autor e a quantidade de livros de cada autor (LIVRO_AUTOR).
+
+
 41. O nome do aluno e a quantidade de empréstimo de cada aluno (EMPRESTIMO_LIVRO).
-42. O nome do aluno e o somatório do valor total dos empréstimos de cada aluno (EMPRESTIMO).
+
+
+42. O nome do aluno e o somatório do valor total dos empréstimos de cada aluno 
+(EMPRESTIMO).
+
+
 43. O nome do aluno e o somatório do valor total dos empréstimos de cada aluno somente daqueles que o somatório for maior do que 7,00 (EMPRESTIMO).
 
 

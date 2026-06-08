@@ -1,3 +1,8 @@
+
+
+ALUNO (1) - (N) EMPRESTIMO -> 
+                            Quando temos uma relação 1:N, a chave estrangeira vai sempre para o lado N.
+
 create table "Cliente"(
     "IdCliente" int not null,
     "Nome" varchar(50) not null, 
@@ -454,3 +459,5 @@ select * from "Cliente_profissao";
 -- Índices no PostgreSQL são utilizados para otimizar consultas frequentes, aumentando a velocidade de busca e recuperação de dados.
 -- exemplo: 
             create index idx_cli_nome on "Cliente" (nome)
+
+
