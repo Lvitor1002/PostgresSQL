@@ -486,12 +486,30 @@ where e."Devolvido" = 'n'
 CONSULTAS COM AGRUPAMENTO + JOIN
 
 38. O nome da editora e a quantidade de livros de cada editora (LIVRO).
+select e."Nome" as "Nome da Editora",
+		count(l."IdLivro") as "Quantidade de Livros"
+from LIVRO l
+inner join EDITORA e on e."IdEditora" = l."IdEditora"
+group by "Nome da Editora"
+
 
 
 39. O nome da categoria e a quantidade de livros de cada categoria (LIVRO).
+select c."Nome" as "Nome da Categoria",
+		count(l."IdLivro") as "Quantidade de Livros"
+from CATEGORIA c
+inner join LIVRO l on l."IdCategoria" = l."IdCategoria"
+group by "Nome da Categoria"
+
 
 
 40. O nome do autor e a quantidade de livros de cada autor (LIVRO_AUTOR).
+select a."Nome" as "Nome do Autor",
+		count(l."IdLivro") as "Quantidade de Livros"
+from LIVRO_AUTOR la
+inner join AUTOR a on a."IdAutor" = la."IdAutor"
+inner join LIVRO l on l."IdLivro" = la."IdLivro"
+group by "Nome do Autor"
 
 
 41. O nome do aluno e a quantidade de empréstimo de cada aluno (EMPRESTIMO_LIVRO).
