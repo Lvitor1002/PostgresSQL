@@ -513,23 +513,48 @@ group by "Nome do Autor"
 
 
 41. O nome do aluno e a quantidade de empréstimo de cada aluno (EMPRESTIMO_LIVRO).
+select a."Nome" as "Nome dos Alunos",
+		count(e."IdEmprestimo") as "Quantidade de Empréstimo"
+from ALUNO a
+inner join EMPRESTIMO e on e."IdAluno" = a."IdAluno"
+group by "Nome dos Alunos"
 
 
 42. O nome do aluno e o somatório do valor total dos empréstimos de cada aluno 
 (EMPRESTIMO).
+select a."Nome" as "Nome dos Alunos",
+		sum(e."Valor") as "Soma dos valores de empréstimos"
+from EMPRESTIMO e
+inner join ALUNO a on a."IdAluno" = e."IdAluno"
+group by "Nome dos Alunos"
 
 
 43. O nome do aluno e o somatório do valor total dos empréstimos de cada aluno somente daqueles que o somatório for maior do que 7,00 (EMPRESTIMO).
-
+select a."Nome" as "Nome dos Alunos",
+		sum(e."Valor") as "Soma dos valores de empréstimos"
+from EMPRESTIMO e
+inner join ALUNO a on a."IdAluno" = e."IdAluno"
+group by "Nome dos Alunos"
+having sum(e."Valor") > 7
+order by "Soma dos valores de empréstimos" asc
 
 
 
 =================================================================
 CONSULTAS COMANDOS DIVERSOS
+
 44. O nome de todos os alunos em ordem decrescente e em letra maiúscula.
+
+
 45. Os empréstimos que foram feitos no mês 04 de 2012.
+
+
 46. Todos os campos do empréstimo. Caso já tenha sido devolvido, mostrar a mensagem “Devolução completa”, senão “Em atraso”.
+
+
 47. Somente o caractere 5 até o caractere 10 do nome dos autores.
+
+
 48. O valor do empréstimo e somente o mês da data de empréstimo. Escreva “Janeiro”, “Fevereiro”, etc
 
 
@@ -537,8 +562,13 @@ CONSULTAS COMANDOS DIVERSOS
 
 =================================================================
 SUBCONSULTAS
+
 49. A data do empréstimo e o valor dos empréstimos que o valor seja maior que a média de todos os empréstimos.
+
+
 50. A data do empréstimo e o valor dos empréstimos que possuem mais de um livro.
+
+
 51. A data do empréstimo e o valor dos empréstimos que o valor seja menor que a soma de todos os empréstimos.
 
 
