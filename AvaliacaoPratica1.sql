@@ -544,18 +544,34 @@ order by "Soma dos valores de empréstimos" asc
 CONSULTAS COMANDOS DIVERSOS
 
 44. O nome de todos os alunos em ordem decrescente e em letra maiúscula.
+select upper("Nome") as "Nome dos Alunos"
+from ALUNO
+order by "Nome dos Alunos" desc
 
 
 45. Os empréstimos que foram feitos no mês 04 de 2012.
+select "Data_Emprestimo" as "Data dos Empréstimos" 
+from EMPRESTIMO
+where extract(month from "Data_Emprestimo") = 4 and extract(year from "Data_Emprestimo") = 2012 
 
 
 46. Todos os campos do empréstimo. Caso já tenha sido devolvido, mostrar a mensagem “Devolução completa”, senão “Em atraso”.
+select *, 
+		case "Devolvido" when 's' then 'Devolução completa' else 'Em atraso'
+		end as "Devolvido"
+from EMPRESTIMO
 
 
 47. Somente o caractere 5 até o caractere 10 do nome dos autores.
+select "Nome", 
+		substring("Nome" from 5 for 10) as "Caracteres do 5 ao 10"
+from AUTOR
 
 
 48. O valor do empréstimo e somente o mês da data de empréstimo. Escreva “Janeiro”, “Fevereiro”, etc
+select "Valor",
+		to_char("Data_Emprestimo", 'TMMonth') as "Data de Empréstimo"
+from EMPRESTIMO
 
 
 
