@@ -587,16 +587,32 @@ SELECT
 FROM EMPRESTIMO
 WHERE "Valor" > (SELECT AVG("Valor") FROM EMPRESTIMO)
 
+
+
 50. A data do empréstimo e o valor dos empréstimos que possuem mais de um livro.
+select e."Data_Emprestimo" as "Data dos Empréstimo",
+		e."Valor",
+		count(l."IdLivro") as "Quantidade de Livros" 
+from EMPRESTIMO_LIVRO el
+inner join LIVRO l on l."IdLivro" = el."IdLivro"
+inner join EMPRESTIMO e on e."IdEmprestimo" = el."IdEmprestimo"
+group by e."Data_Emprestimo", e."Valor"
+having count(l."IdLivro") > 1
+
 
 
 51. A data do empréstimo e o valor dos empréstimos que o valor seja menor que a soma de todos os empréstimos.
+select "Data_Emprestimo" as "Data dos Empréstimo",
+		"Valor",
+		(select sum("Valor") from EMPRESTIMO) as "Soma de todos os Empréstimos" 
+from EMPRESTIMO
+group by "Data_Emprestimo", "Valor"
+having "Valor" < (select sum("Valor") from EMPRESTIMO)
 
 
 
-
-
-
+=================================================================
+https://www.udemy.com/course/banco-de-dados-sql-postgresql/learn/lecture/36179426#overview
 
 
 
