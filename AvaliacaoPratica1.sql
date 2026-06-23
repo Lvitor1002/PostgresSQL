@@ -580,7 +580,12 @@ from EMPRESTIMO
 SUBCONSULTAS
 
 49. A data do empréstimo e o valor dos empréstimos que o valor seja maior que a média de todos os empréstimos.
-
+SELECT
+    "Data_Emprestimo" AS "Data dos Empréstimos",
+    "Valor",
+	(SELECT round(AVG("Valor"),2) FROM EMPRESTIMO) AS "Média dos Empréstimos"
+FROM EMPRESTIMO
+WHERE "Valor" > (SELECT AVG("Valor") FROM EMPRESTIMO)
 
 50. A data do empréstimo e o valor dos empréstimos que possuem mais de um livro.
 
