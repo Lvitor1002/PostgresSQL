@@ -461,3 +461,74 @@ select * from "Cliente_profissao";
             create index idx_cli_nome on "Cliente" (nome)
 
 
+
+_________________________________________________________________________________________
+FUNÇÕES
+
+--Criação da Função: formatada moeda
+create function formata_moeda("Valor" float) returns varchar(20) LANGUAGE plpgsql as 
+$$
+begin
+	return concat('R$ ', round(cast("Valor" as numeric),2));
+end;
+$$;
+
+
+--Chamada da função
+select "Valor" as "Valor Original", 
+		formata_moeda("Valor") as "Valor Formatado" 
+from "Pedido"
+
+
+
+_________________________________________________________________________________________
+
+--Criação da Função: get nome by id
+create function get_nome_by_id(idc integer) returns varchar(50) language plpgsql as
+$$
+
+declare r varchar(50);
+
+begin
+    select "Nome" into r from "Cliente"
+    where "IdCliente" = idc;
+	return r;
+end;
+
+$$;
+
+
+--Chamada da função
+select "Valor", get_nome_by_id("IdCliente") from "Pedido"
+
+
+
+_________________________________________________________________________________________
+
+--Crie uma função que receba como parâmetro o ID do pedido e retorne o valor total deste pedido
+create function valor_total_pedido_por_id(idc integer) returns varchar(50) language plpgsql as
+$$
+
+declare valor_total decimal;
+
+begin
+	select sum("Valor") into valor_total from "Pedido"
+	where "IdCliente" = idc;
+	return valor_total;
+end;
+
+$$;
+
+--Chamada da função
+select valor_total_pedido_por_id("IdCliente") as "Valor total" from "Pedido";
+
+
+
+_________________________________________________________________________________________
+
+--Crie uma função chamada "maior", que quando executada retorne o pedido com o maior valor
+
+
+_________________________________________________________________________________________
+ 
+https://www.udemy.com/course/banco-de-dados-sql-postgresql/learn/lecture/36179430#overview

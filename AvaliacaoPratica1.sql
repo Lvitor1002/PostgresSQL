@@ -611,8 +611,12 @@ having "Valor" < (select sum("Valor") from EMPRESTIMO)
 
 
 
-=================================================================
-https://www.udemy.com/course/banco-de-dados-sql-postgresql/learn/lecture/36179426#overview
+
+
+
+
+
+
 
 
 
