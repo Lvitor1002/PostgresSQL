@@ -527,6 +527,23 @@ select valor_total_pedido_por_id("IdCliente") as "Valor total" from "Pedido";
 _________________________________________________________________________________________
 
 --Crie uma função chamada "maior", que quando executada retorne o pedido com o maior valor
+create function maior() returns numeric language plpgsql as 
+$$
+
+declare maior_valor numeric;
+
+begin
+	select max("Valor") into maior_valor from "Pedido" ;
+	return maior_valor;
+end;
+
+$$;
+
+
+-- Chamando a função
+select maior() as "Maior Valor" from "Pedido" limit 1
+
+
 
 
 _________________________________________________________________________________________
