@@ -527,14 +527,11 @@ select valor_total_pedido_por_id("IdCliente") as "Valor total" from "Pedido";
 _________________________________________________________________________________________
 
 --Crie uma função chamada "maior", que quando executada retorne o pedido com o maior valor
-create function maior() returns numeric language plpgsql as 
+create or replace function maior() returns integer language plpgsql as 
 $$
 
-declare maior_valor numeric;
-
 begin
-	select max("Valor") into maior_valor from "Pedido" ;
-	return maior_valor;
+	return (select max("Valor") into maior_valor from "Pedido") ;
 end;
 
 $$;
@@ -547,5 +544,40 @@ select maior() as "Maior Valor" from "Pedido" limit 1
 
 
 _________________________________________________________________________________________
- 
-https://www.udemy.com/course/banco-de-dados-sql-postgresql/learn/lecture/36179430#overview
+StoredProcedures
+
+
+create procedure sp_insere_cliente(nome_cliente varchar(50)) language sql as
+$$
+	insert into "Cliente"("Nome")values(nome_cliente);
+$$;
+
+
+--Chamando a procedure
+call sp_insere_cliente('Pedro Miguel');
+
+
+
+_________________________________________________________________________________________
+
+-- 1. Crie uma stored procedure que receba como parâmetro o ID do produto e o percentual de aumento, e reajuste o preço somente deste produto de acordo com o valor passado como parâmetro
+
+create procedure sp_reajustar_preco_produto(id_produto integer, percentual_produto NUMERIC) language sql as 
+$$
+	update "Produto" set "Valor" = "Valor" * (1 + percentual_produto / 100.0) where "IdProduto" = id_produto
+$$;
+
+
+--Chamando a procedure
+call sp_reajustar_preco_produto(1,10)
+
+
+_________________________________________________________________________________________
+
+-- 2. Crie uma stored procedure que receba como parâmetro o ID do produto e exclua da base de dados somente o produto com o ID correspondente
+
+
+
+_________________________________________________________________________________________
+
+https://www.udemy.com/course/banco-de-dados-sql-postgresql/learn/lecture/36229916#overview
