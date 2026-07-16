@@ -576,8 +576,19 @@ ________________________________________________________________________________
 
 -- 2. Crie uma stored procedure que receba como parâmetro o ID do produto e exclua da base de dados somente o produto com o ID correspondente
 
+create procedure sp_exclui_produto_by_id(id_produto integer) language sql as
+$$
+	delete from "Produto" where "IdProduto" = id_produto;
+$$;
+
+
+--Chamando
+call sp_exclui_produto_by_id(10)
+
+
+
 
 
 _________________________________________________________________________________________
 
-https://www.udemy.com/course/banco-de-dados-sql-postgresql/learn/lecture/36229916#overview
+https://www.udemy.com/course/banco-de-dados-sql-postgresql/learn/lecture/36229924#overview
