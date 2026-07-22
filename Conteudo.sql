@@ -462,6 +462,10 @@ select * from "Cliente_profissao";
 
 
 
+
+
+
+
 _________________________________________________________________________________________
 FUNÇÕES
 
@@ -543,6 +547,11 @@ select maior() as "Maior Valor" from "Pedido" limit 1
 
 
 
+
+
+
+
+
 _________________________________________________________________________________________
 StoredProcedures
 
@@ -589,6 +598,28 @@ call sp_exclui_produto_by_id(10)
 
 
 
-_________________________________________________________________________________________
 
-https://www.udemy.com/course/banco-de-dados-sql-postgresql/learn/lecture/36229924#overview
+
+_________________________________________________________________________________________
+TRIGGERS_
+
+
+
+create table "Cliente_Auditoria"(
+	"IdCliente" integer not null,
+	"DataCriacao" timestamp not null
+)
+
+--Criação da função da trigger: Sempre que um cliente for inserido deve-se popular a nova tabela "Cliente_Auditoria"
+create or replace function cliente_log() returns trigger language plpgsql as
+$$
+	begin
+		insert into "Cliente_Auditoria"("IdCliente","DataCriacao") values (new."IdCliente", current_timestamp);
+		return new;
+	end;
+$$;
+
+
+--Criação da trigger: 
+create or replace trigger tr_cliente_log after insert on "Cliente" 
+	for each row execute procedure cliente_log()
