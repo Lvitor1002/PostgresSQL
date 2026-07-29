@@ -623,3 +623,36 @@ $$;
 --Criação da trigger: 
 create or replace trigger tr_cliente_log after insert on "Cliente" 
 	for each row execute procedure cliente_log()
+
+
+
+_________________________________________________________________________________________
+-- 1. Crie uma tabela chamada PEDIDOS_APAGADOS
+create table PEDIDOS_APAGADOS(
+    "IdPedido" int not null,
+    "IdCliente" int not null,
+    "IdTransportadora" int,
+    "IdVendedor" int not null,
+    "DataPedido" date not null,
+    "Valor" float not null,
+    "DataApagado" date not null
+)
+
+-- 2. Faça uma trigger que quando um pedido for apagado, todos os seus dados devem ser copiados para a tabela PEDIDOS_APAGADOS
+create or replace function pedido_apagado_log() returns trigger language plpgsql as 
+$$
+    begin 
+        insert into PEDIDOS_APAGADOS ("IdPedido","IdCliente","IdTransportadora","IdVendedor","DataPedido","Valor","DataApagado")
+                            values(old."IdPedido", old."IdCliente",old."IdTransportadora",old."IdVendedor",old."DataPedido",old."Valor", CURRENT_TIMESTAMP);
+        return old;
+    end;
+$$;
+
+
+create or replace trigger tr_pedido_apagado_log before delete on "Pedido" for each row execute procedure pedido_apagado_log();
+
+
+_________________________________________________________________________________________
+
+
+https://www.udemy.com/course/banco-de-dados-sql-postgresql/learn/lecture/36229966#overview
